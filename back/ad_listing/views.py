@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db.models import F
 
 from .models import Advert
@@ -29,6 +30,6 @@ class AdvertRetrieveViewSet(RetrieveModelMixin, GenericAdvertViewSet):
         #increments views by one avoiding race condition
         queryset.update(views=F('views')+1)
 
-        instance = queryset.first()
+        instance = get_object_or_404(queryset, pk=pk)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
