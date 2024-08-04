@@ -24,7 +24,7 @@ class AdvertListViewSet(ListModelMixin, GenericAdvertViewSet):
 class AdvertRetrieveViewSet(RetrieveModelMixin, GenericAdvertViewSet):
     
     def retrieve(self, request, pk=None):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().filter(pk=pk)
 
         #increments views by one avoiding race condition
         queryset.update(views=F('views')+1)
