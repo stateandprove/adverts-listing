@@ -1,0 +1,48 @@
+version: "3.3"
+
+services:
+  postgres:
+    image: postgres:14.3-alpine
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS:-postgres}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_DB=${DB_NAME:-postgres}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: ./back
+    restart: always
+    volumes:
+      - ./back:/usr/src/app
+    environment:
+      - DEBUG=${DEBUG:-False}
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_PASS=${DB_PASS:-postgres}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_NAME=${DB_NAME:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - web:web
+    depends_on:
+      - web
+    volumes:
+      - ./back/static:/var/www/static

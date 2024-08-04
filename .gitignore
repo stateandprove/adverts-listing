@@ -1,0 +1,8 @@
+__pycache__/
+data/
+
+.env
+.DS_Store
+
+back/static/*
+!back/static/.gitkeep

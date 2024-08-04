@@ -1,0 +1,5 @@
+django==4.2.9
+djangorestframework==3.15.0
+gunicorn==22.0.0
+django-environ==v0.11.2
+psycopg[binary]
