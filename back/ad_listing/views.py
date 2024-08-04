@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.db.models import F
 
@@ -25,9 +26,12 @@ class AdvertListViewSet(ListModelMixin, GenericAdvertViewSet):
 class AdvertRetrieveViewSet(RetrieveModelMixin, GenericAdvertViewSet):
     
     def retrieve(self, request, pk=None):
+        if not pk.isnumeric():
+            raise Http404
+
         queryset = self.get_queryset().filter(pk=pk)
 
-        #increments views by one avoiding race condition
+        # increments views by one avoiding race condition
         queryset.update(views=F('views')+1)
 
         instance = get_object_or_404(queryset, pk=pk)
