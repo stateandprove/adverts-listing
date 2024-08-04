@@ -13,7 +13,7 @@ class GenericAdvertViewSet(GenericViewSet):
     queryset = Advert.objects.select_related(
         "city", "category"
     ).order_by(
-        "id"
+        "-id"
     ).all()
 
 
